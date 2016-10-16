@@ -16,4 +16,7 @@ public interface ApiGithub {
 
   @GET("repos/{ownerName}/{repositoryName}/readme") Observable<RepositoryReadme> getReadmeDetails(@Path("ownerName") String ownerName,
       @Path("repositoryName") String repositoryName);
+
+  @GET("repos/{ownerName}/{repositoryName}//license") Observable<GithubLicense> getRepoLicense(@Path("ownerName") String ownerName,
+      @Path("repositoryName") String repositoryName);
 }

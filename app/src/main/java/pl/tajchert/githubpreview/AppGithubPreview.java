@@ -2,6 +2,7 @@ package pl.tajchert.githubpreview;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 import timber.log.Timber;
 
 /**
@@ -18,7 +19,7 @@ public class AppGithubPreview extends Application {
     if (BuildConfig.DEBUG) {
       Timber.plant(new Timber.DebugTree());
     } else {
-      //TODO Crashlytics or other
+      Timber.plant(new CrashReportingTree());
     }
   }
 
@@ -33,5 +34,17 @@ public class AppGithubPreview extends Application {
   private void createDaggerInjections() {
     appComponent = ApplicationComponent.Initializer.init(this);
     appComponent.inject(this);
+  }
+
+  private static class CrashReportingTree extends Timber.Tree {
+    @Override protected void log(int priority, String tag, String message, Throwable t) {
+      if (priority == Log.VERBOSE || priority == Log.DEBUG) {
+        return;
+      }
+      //Crashlytics.log(priority, tag, message);
+      if (t != null && priority >= Log.WARN) {
+        //Crashlytics.logException(t);
+      }
+    }
   }
 }

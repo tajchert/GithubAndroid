@@ -5,6 +5,7 @@ import dagger.Provides;
 import javax.inject.Singleton;
 import pl.tajchert.githubpreview.api.ApiGithub;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
@@ -18,7 +19,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
   }
 
   @Provides @Singleton public ApiGithub providesApiService() {
-    Retrofit retrofit = new Retrofit.Builder().baseUrl(mBaseUrl).addConverterFactory(GsonConverterFactory.create()).build();
+    Retrofit retrofit = new Retrofit.Builder().baseUrl(mBaseUrl)
+        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create())
+        .build();
 
     return retrofit.create(ApiGithub.class);
   }

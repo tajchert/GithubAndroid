@@ -17,6 +17,11 @@ import android.view.View;
 import com.squareup.picasso.Picasso;
 import javax.inject.Inject;
 import pl.tajchert.githubpreview.api.ApiGithub;
+import pl.tajchert.githubpreview.api.GithubRepository;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
   public static final String TAG = MainActivity.class.getCanonicalName();
@@ -40,6 +45,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     if (getIntent() != null && Intent.ACTION_VIEW.equals(getIntent().getAction())) {
       if (getIntent().getData() != null) {
         String Url = "www.github.com" + getIntent().getData().getPath();
+        //TODO detect type of path (username, repo...)
+        apiService.getRepositoryDetails("tajchert", "BusWear")
+            .subscribeOn(Schedulers.newThread())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(subGithubRepo);
       }
     }
 
@@ -52,6 +62,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
   }
+
+  private Subscriber subGithubRepo = new Subscriber<GithubRepository>() {
+    @Override public void onCompleted() {
+      Timber.i("GithubRepository - onCompleted");
+    }
+
+    @Override public void onError(Throwable e) {
+      Timber.i("GithubRepository - onError");
+    }
+
+    @Override public void onNext(GithubRepository githubRepository) {
+      Timber.i("GithubRepository - onNext");
+    }
+  };
 
   @Override public void onBackPressed() {
     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

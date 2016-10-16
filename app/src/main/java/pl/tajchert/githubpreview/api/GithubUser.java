@@ -7,14 +7,11 @@ import com.google.gson.annotations.SerializedName;
  * Created by mtajc on 16.10.2016.
  */
 
-public class GithubUser {
-
+public class GithubUser extends GithubResponse {
   @SerializedName("login") @Expose public String login;
   @SerializedName("id") @Expose public Long id;
   @SerializedName("avatar_url") @Expose public String avatarUrl;
   @SerializedName("gravatar_id") @Expose public String gravatarId;
-  @SerializedName("url") @Expose public String url;
-  @SerializedName("html_url") @Expose public String htmlUrl;
   @SerializedName("followers_url") @Expose public String followersUrl;
   @SerializedName("following_url") @Expose public String followingUrl;
   @SerializedName("gists_url") @Expose public String gistsUrl;
@@ -26,7 +23,6 @@ public class GithubUser {
   @SerializedName("received_events_url") @Expose public String receivedEventsUrl;
   @SerializedName("type") @Expose public String type;
   @SerializedName("site_admin") @Expose public Boolean siteAdmin;
-  @SerializedName("name") @Expose public String name;
   @SerializedName("company") @Expose public String company;
   @SerializedName("blog") @Expose public String blog;
   @SerializedName("location") @Expose public String location;

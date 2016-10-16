@@ -7,17 +7,14 @@ import com.google.gson.annotations.SerializedName;
  * Created by mtajc on 16.10.2016.
  */
 
-public class GithubRepository {
+public class GithubRepository extends GithubResponse {
 
   @SerializedName("id") @Expose public Long id;
-  @SerializedName("name") @Expose public String name;
   @SerializedName("full_name") @Expose public String fullName;
   @SerializedName("owner") @Expose public Owner owner;
   @SerializedName("private") @Expose public Boolean _private;
-  @SerializedName("html_url") @Expose public String htmlUrl;
   @SerializedName("description") @Expose public String description;
   @SerializedName("fork") @Expose public Boolean fork;
-  @SerializedName("url") @Expose public String url;
   @SerializedName("forks_url") @Expose public String forksUrl;
   @SerializedName("keys_url") @Expose public String keysUrl;
   @SerializedName("collaborators_url") @Expose public String collaboratorsUrl;
@@ -57,12 +54,10 @@ public class GithubRepository {
   @SerializedName("created_at") @Expose public String createdAt;
   @SerializedName("updated_at") @Expose public String updatedAt;
   @SerializedName("pushed_at") @Expose public String pushedAt;
-  @SerializedName("git_url") @Expose public String gitUrl;
   @SerializedName("ssh_url") @Expose public String sshUrl;
   @SerializedName("clone_url") @Expose public String cloneUrl;
   @SerializedName("svn_url") @Expose public String svnUrl;
   @SerializedName("homepage") @Expose public String homepage;
-  @SerializedName("size") @Expose public Long size;
   @SerializedName("stargazers_count") @Expose public Long stargazersCount;
   @SerializedName("watchers_count") @Expose public Long watchersCount;
   @SerializedName("language") @Expose public String language;

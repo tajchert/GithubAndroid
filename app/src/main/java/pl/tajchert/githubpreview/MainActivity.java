@@ -1,6 +1,7 @@
 package pl.tajchert.githubpreview;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -13,12 +14,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import com.squareup.picasso.Picasso;
+import javax.inject.Inject;
+import pl.tajchert.githubpreview.api.ApiGithub;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+  public static final String TAG = MainActivity.class.getCanonicalName();
+  @Inject SharedPreferences sharedPreferences;
+  @Inject Picasso picasso;
+  @Inject ApiGithub apiService;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    AppGithubPreview.getAppInstance(this).getAppComponent().inject(this);
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 

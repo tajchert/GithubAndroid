@@ -9,6 +9,8 @@ import rx.Observable;
  */
 
 public interface ApiGithub {
+  @GET("users/{userName}/") Observable<GithubUser> getUserDetails(@Path("userName") String userName);
+
   @GET("repos/{ownerName}/{repositoryName}") Observable<GithubRepository> getRepositoryDetails(@Path("ownerName") String ownerName,
       @Path("repositoryName") String repositoryName);
 

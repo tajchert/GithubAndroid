@@ -17,8 +17,6 @@ import android.view.View;
 import com.squareup.picasso.Picasso;
 import javax.inject.Inject;
 import pl.tajchert.githubpreview.api.ApiGithub;
-import pl.tajchert.githubpreview.api.GithubRepository;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -46,36 +44,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       if (getIntent().getData() != null) {
         String Url = "www.github.com" + getIntent().getData().getPath();
         //TODO detect type of path (username, repo...)
-        apiService.getRepositoryDetails("tajchert", "BusWear")
-            .subscribeOn(Schedulers.newThread())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(subGithubRepo);
+        getRepoDetails();
       }
     }
 
     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
     ActionBarDrawerToggle toggle =
         new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-    drawer.setDrawerListener(toggle);
+    drawer.addDrawerListener(toggle);
     toggle.syncState();
 
     NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
     navigationView.setNavigationItemSelectedListener(this);
   }
 
-  private Subscriber subGithubRepo = new Subscriber<GithubRepository>() {
-    @Override public void onCompleted() {
-      Timber.i("GithubRepository - onCompleted");
-    }
-
-    @Override public void onError(Throwable e) {
-      Timber.i("GithubRepository - onError");
-    }
-
-    @Override public void onNext(GithubRepository githubRepository) {
-      Timber.i("GithubRepository - onNext");
-    }
-  };
+  private void getRepoDetails() {
+    apiService.getRepositoryDetails("tajchert", "BusWear").doOnSubscribe(() -> {
+      Timber.i("getRepositoryDetails - OnSubscribe");
+    }).doOnCompleted(() -> {
+      Timber.i("getRepositoryDetails - OnCompleted");
+    }).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).first().subscribe(githubRepository -> {
+      Timber.i("getRepositoryDetails - onNext");
+    }, e -> {
+      Timber.i("getRepositoryDetails - onError");
+    });
+  }
 
   @Override public void onBackPressed() {
     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

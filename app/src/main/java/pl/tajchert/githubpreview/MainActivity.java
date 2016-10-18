@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -21,6 +22,7 @@ import butterknife.ButterKnife;
 import com.squareup.picasso.Picasso;
 import javax.inject.Inject;
 import pl.tajchert.githubpreview.api.ApiGithub;
+import pl.tajchert.githubpreview.api.GithubLicense;
 import pl.tajchert.githubpreview.view.AdapterViewPagerRepo;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -77,10 +79,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       Timber.i("getRepositoryDetails - OnSubscribe");
     }).doOnCompleted(() -> {
       Timber.i("getRepositoryDetails - OnCompleted");
-    }).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).flatMap(githubRepository -> {
-      return Observable.just(apiService.getRepoLicense(githubRepository.owner.login, githubRepository.name));
-    }).subscribe(githubLicense -> {
-
+    }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).flatMap(githubRepository -> {
+      Observable<GithubLicense> repoLicense = apiService.getRepoLicense(githubRepository.owner.login, githubRepository.name)
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread());
+      return Observable.zip(repoLicense, Observable.just(githubRepository), Pair::new);
+    }).subscribe(pair -> {
       Timber.i("getRepositoryDetails - onNext");
     }, e -> {
       Timber.i("getRepositoryDetails - onError");

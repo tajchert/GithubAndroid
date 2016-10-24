@@ -15,24 +15,24 @@
       tools:text="Pull requests"
       tools:visibility="visible"
       />
-  <pl.tajchert.githubpreview.view.CircularTextView
+  <TextView
       android:id="@+id/tab_badge"
       android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
+      android:layout_height="20dp"
       android:layout_alignBottom="@+id/tab_text"
       android:layout_alignParentTop="true"
       android:layout_gravity="center_vertical"
       android:layout_marginTop="3dp"
       android:layout_toRightOf="@+id/tab_text"
+      android:background="@drawable/circle_accent_dark"
       android:fontFamily="sans-serif"
       android:gravity="center"
-      android:maxLength="2"
       android:paddingBottom="3dp"
       android:paddingLeft="3dp"
       android:paddingRight="3dp"
       android:paddingTop="3dp"
       android:text="0"
-      android:textColor="@color/white"
+      android:textColor="@color/black_gray"
       android:textSize="10sp"
       />
 

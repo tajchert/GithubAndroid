@@ -25,7 +25,6 @@ import javax.inject.Inject;
 import pl.tajchert.githubpreview.api.ApiGithub;
 import pl.tajchert.githubpreview.api.GithubLicense;
 import pl.tajchert.githubpreview.view.AdapterViewPagerRepo;
-import pl.tajchert.githubpreview.view.CircularTextView;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -177,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       }
       if (tab != null && tab.getCustomView() != null) {
         TextView tabText = (TextView) tab.getCustomView().findViewById(R.id.tab_text);
-        CircularTextView tabBadge = (CircularTextView) tab.getCustomView().findViewById(R.id.tab_badge);
+        TextView tabBadge = (TextView) tab.getCustomView().findViewById(R.id.tab_badge);
         AdapterViewPagerRepo.setTabSelected(isSelected, tabText, tabBadge);
       }
     }

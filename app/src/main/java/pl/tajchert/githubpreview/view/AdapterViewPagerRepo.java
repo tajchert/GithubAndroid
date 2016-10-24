@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -49,7 +50,7 @@ public class AdapterViewPagerRepo extends FragmentPagerAdapter {
 
     if (tab != null) {
       TextView tabText = (TextView) tab.findViewById(R.id.tab_text);
-      CircularTextView tabBadge = (CircularTextView) tab.findViewById(R.id.tab_badge);
+      TextView tabBadge = (TextView) tab.findViewById(R.id.tab_badge);
       setTabSelected(isSelected, tabText, tabBadge);
       tabText.setText(tabItemRepos.get(position).title);
       tabBadge.setText(Integer.toString(tabItemRepos.get(position).counter));
@@ -58,20 +59,22 @@ public class AdapterViewPagerRepo extends FragmentPagerAdapter {
     return tab;
   }
 
-  public static void setTabSelected(boolean isSelected, TextView tabText, CircularTextView tabBadge) {
+  public static void setTabSelected(boolean isSelected, TextView tabText, TextView tabBadge) {
     if (isSelected) {
       if (tabText != null) {
         tabText.setAlpha(1f);
       }
       if (tabBadge != null) {
-        tabBadge.setSolidColor(R.color.colorAccent);
+        tabBadge.setBackgroundResource(R.drawable.circle_accent);
+        tabBadge.setTextColor(ContextCompat.getColor(tabBadge.getContext(), R.color.white));
       }
     } else {
       if (tabText != null) {
         tabText.setAlpha(0.7f);
       }
       if (tabBadge != null) {
-        tabBadge.setSolidColor(R.color.colorAccentDark);
+        tabBadge.setBackgroundResource(R.drawable.circle_accent_dark);
+        tabBadge.setTextColor(ContextCompat.getColor(tabBadge.getContext(), R.color.black_gray));
       }
     }
   }

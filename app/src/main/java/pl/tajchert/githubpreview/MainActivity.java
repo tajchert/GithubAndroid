@@ -25,11 +25,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.context.IconicsLayoutInflater;
 import com.squareup.picasso.Picasso;
 import javax.inject.Inject;
 import pl.tajchert.githubpreview.api.ApiGithub;
 import pl.tajchert.githubpreview.api.GithubLicense;
+import pl.tajchert.githubpreview.api.GithubRepository;
 import pl.tajchert.githubpreview.databinding.ActivityMainBinding;
 import pl.tajchert.githubpreview.view.AdapterViewPagerRepo;
 import rx.Observable;
@@ -63,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     setSupportActionBar(toolbar);
     setViewPagerWithTabs();
     setToolbar();
-
+    fab.setImageDrawable(new IconicsDrawable(this, "gmd-star_border").colorRes(R.color.white));
     fab.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
@@ -137,10 +139,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           .subscribeOn(Schedulers.io())
           .observeOn(AndroidSchedulers.mainThread());
       return Observable.zip(repoLicense, Observable.just(githubRepository), Pair::new);
-    }).subscribe(pair -> {
+    }).flatMap(pair -> {
+      GithubRepository repository = pair.second;
+      if (pair.first != null) {
+        repository.license = pair.first;
+      }
+      return Observable.just(repository);
+    }).subscribe(repository -> {
       Timber.i("getRepositoryDetails - onNext");
-      if(binding != null) {
-        binding.setRepo(pair.second);
+      if (binding != null) {
+        binding.setRepo(repository);
       }
     }, e -> {
       Timber.i("getRepositoryDetails - onError");

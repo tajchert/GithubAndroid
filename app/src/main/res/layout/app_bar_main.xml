@@ -21,6 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="4dp"
         >
 
       <android.support.design.widget.CollapsingToolbarLayout
@@ -48,9 +49,11 @@
             android:id="@+id/toolbarContentLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginBottom="6dp"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="24dp"
+            android:gravity="bottom"
             android:orientation="vertical"
             >
           <LinearLayout
@@ -120,7 +123,7 @@
           <LinearLayout
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginTop="4dp"
+              android:layout_marginTop="2dp"
               android:orientation="horizontal"
               >
 
@@ -174,7 +177,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:text="@{repo.license.name}"
+                android:text="@{repo.license.license.name}"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 tools:text="Apache"
@@ -183,7 +186,7 @@
           <LinearLayout
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginTop="4dp"
+              android:layout_marginTop="2dp"
               android:orientation="horizontal"
               >
 
@@ -203,7 +206,6 @@
           <LinearLayout
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:layout_marginTop="4dp"
               android:orientation="horizontal"
               >
 
@@ -232,9 +234,11 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email"
+        app:elevation="4dp"
+        app:fabSize="mini"
+        app:layout_anchor="@id/appBar"
+        app:layout_anchorGravity="bottom|right|end"
         />
 
   </android.support.design.widget.CoordinatorLayout>

@@ -76,7 +76,7 @@ public class GithubRepository extends GithubResponse {
   @SerializedName("subscribers_count") @Expose public Long subscribersCount;
 
   private transient String name;//TODO for some reason it crashes app when it is a field for GSON
-  public transient License license;
+  public transient GithubLicense license;
   public transient Long commitsCount;
   public transient Long contributorsCount;
 

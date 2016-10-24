@@ -1,60 +1,241 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context="pl.tajchert.githubpreview.MainActivity"
     >
-
-  <android.support.design.widget.AppBarLayout
-      android:id="@+id/appBar"
+  <data>
+    <variable
+        name="repo"
+        type="pl.tajchert.githubpreview.api.GithubRepository"
+        />
+  </data>
+  <android.support.design.widget.CoordinatorLayout
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:theme="@style/AppTheme.AppBarOverlay"
+      android:layout_height="match_parent"
+      android:fitsSystemWindows="true"
+      tools:context="pl.tajchert.githubpreview.MainActivity"
       >
 
-    <android.support.design.widget.CollapsingToolbarLayout
-        android:id="@+id/collapsing_toolbar"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="170dp"
-        android:fitsSystemWindows="true"
-        android:minHeight="?attr/actionBarSize"
-        app:contentScrim="?attr/colorPrimary"
-        app:expandedTitleMarginEnd="64dp"
-        app:expandedTitleMarginStart="48dp"
-        app:layout_scrollFlags="scroll|exitUntilCollapsed"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay"
         >
 
-      <android.support.v7.widget.Toolbar
-          android:id="@+id/toolbar"
+      <android.support.design.widget.CollapsingToolbarLayout
+          android:id="@+id/collapsing_toolbar"
           android:layout_width="match_parent"
-          android:layout_height="?attr/actionBarSize"
-          android:background="?attr/colorPrimary"
-          app:layout_collapseMode="pin"
-          app:layout_scrollFlags="scroll|enterAlways"
-          app:popupTheme="@style/AppTheme.PopupOverlay"
-          />
-      <TextView
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:text="TEST"
-          />
-    </android.support.design.widget.CollapsingToolbarLayout>
+          android:layout_height="170dp"
+          android:fitsSystemWindows="true"
+          android:minHeight="?attr/actionBarSize"
+          app:contentScrim="?attr/colorPrimary"
+          app:expandedTitleMarginEnd="64dp"
+          app:expandedTitleMarginStart="48dp"
+          app:layout_scrollFlags="scroll|exitUntilCollapsed"
+          >
 
-  </android.support.design.widget.AppBarLayout>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:layout_collapseMode="pin"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            />
+        <LinearLayout
+            android:id="@+id/toolbarContentLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginTop="64dp"
+            android:orientation="vertical"
+            >
+          <LinearLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:gravity="center_vertical"
+              android:orientation="horizontal"
+              >
+            <com.mikepenz.iconics.view.IconicsImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:padding="3dp"
+                app:iiv_color="@color/white"
+                app:iiv_icon="oct-star"
+                />
+            <TextView
+                android:id="@+id/textRepoStars"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="@{repo.stargazersCount}"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                tools:text="300"
+                />
 
-  <include layout="@layout/content_main"/>
+            <com.mikepenz.iconics.view.IconicsImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginLeft="6dp"
+                android:padding="3dp"
+                app:iiv_color="@color/white"
+                app:iiv_icon="oct-eye"
+                />
+            <TextView
+                android:id="@+id/textRepoWatchers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="@{repo.subscribersCount}"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                tools:text="300"
+                />
 
-  <android.support.design.widget.FloatingActionButton
-      android:id="@+id/fab"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="bottom|end"
-      android:layout_margin="@dimen/fab_margin"
-      app:srcCompat="@android:drawable/ic_dialog_email"
-      />
 
-</android.support.design.widget.CoordinatorLayout>
+            <com.mikepenz.iconics.view.IconicsImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginLeft="6dp"
+                android:padding="3dp"
+                app:iiv_color="@color/white"
+                app:iiv_icon="oct-repo-forked"
+                />
+            <TextView
+                android:id="@+id/textRepoForks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="@{repo.forksCount}"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                tools:text="300"
+                />
+          </LinearLayout>
+
+          <LinearLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="4dp"
+              android:orientation="horizontal"
+              >
+
+            <com.mikepenz.iconics.view.IconicsImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:padding="3dp"
+                app:iiv_color="@color/white"
+                app:iiv_icon="oct-history"
+                />
+            <TextView
+                android:id="@+id/textRepoCommits"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="@{repo.commitsCount}"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                tools:text="300"
+                />
+
+            <com.mikepenz.iconics.view.IconicsImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginLeft="6dp"
+                android:padding="3dp"
+                app:iiv_color="@color/white"
+                app:iiv_icon="oct-organization"
+                />
+            <TextView
+                android:id="@+id/textRepoContributors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="@{repo.contributorsCount}"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                tools:text="300"
+                />
+
+            <com.mikepenz.iconics.view.IconicsImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_marginLeft="6dp"
+                android:padding="3dp"
+                app:iiv_color="@color/white"
+                app:iiv_icon="oct-law"
+                />
+            <TextView
+                android:id="@+id/textRepoLicense"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="@{repo.license.name}"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                tools:text="Apache"
+                />
+          </LinearLayout>
+          <LinearLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="4dp"
+              android:orientation="horizontal"
+              >
+
+            <TextView
+                android:id="@+id/textRepoNames"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif"
+                android:maxLines="1"
+                android:text="@{repo.name}"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                tools:text="TopSecretProject"
+                />
+          </LinearLayout>
+          <LinearLayout
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="4dp"
+              android:orientation="horizontal"
+              >
+
+            <TextView
+                android:id="@+id/textRepoAuthor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif"
+                android:maxLines="1"
+                android:text="@{repo.owner.login}"
+                android:textColor="@color/gray"
+                android:textSize="14sp"
+                tools:text="Kowalski"
+                />
+          </LinearLayout>
+
+        </LinearLayout>
+      </android.support.design.widget.CollapsingToolbarLayout>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/content_main"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@android:drawable/ic_dialog_email"
+        />
+
+  </android.support.design.widget.CoordinatorLayout>
+</layout>

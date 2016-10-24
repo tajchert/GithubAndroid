@@ -74,4 +74,56 @@ public class GithubRepository extends GithubResponse {
   @SerializedName("default_branch") @Expose public String defaultBranch;
   @SerializedName("network_count") @Expose public Long networkCount;
   @SerializedName("subscribers_count") @Expose public Long subscribersCount;
+
+  private transient String name;//TODO for some reason it crashes app when it is a field for GSON
+  public transient License license;
+  public transient Long commitsCount;
+  public transient Long contributorsCount;
+
+  public String getName() {
+    if (name == null) {
+      if (fullName != null && fullName.contains("/")) {
+        String[] arr = fullName.split("/");
+        if (arr.length >= 1) {
+          name = arr[1];
+        }
+      }
+    }
+    return name;
+  }
+
+  public String getCommitsCount() {
+    if (commitsCount == null) {
+      commitsCount = 0L;
+    }
+    return Long.toString(commitsCount);
+  }
+
+  public String getContributorsCount() {
+    if (contributorsCount == null) {
+      contributorsCount = 0L;
+    }
+    return Long.toString(contributorsCount);
+  }
+
+  public String getSubscribersCount() {
+    if (subscribersCount == null) {
+      subscribersCount = 0L;
+    }
+    return Long.toString(subscribersCount);
+  }
+
+  public String getStargazersCount() {
+    if (stargazersCount == null) {
+      stargazersCount = 0L;
+    }
+    return Long.toString(stargazersCount);
+  }
+
+  public String getForksCount() {
+    if (forksCount == null) {
+      forksCount = 0L;
+    }
+    return Long.toString(forksCount);
+  }
 }

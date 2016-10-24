@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.squareup.picasso.Picasso;
@@ -24,12 +25,13 @@ import javax.inject.Inject;
 import pl.tajchert.githubpreview.api.ApiGithub;
 import pl.tajchert.githubpreview.api.GithubLicense;
 import pl.tajchert.githubpreview.view.AdapterViewPagerRepo;
+import pl.tajchert.githubpreview.view.CircularTextView;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, ViewPager.OnPageChangeListener {
   public static final String TAG = MainActivity.class.getCanonicalName();
   @Inject SharedPreferences sharedPreferences;
   @Inject Picasso picasso;
@@ -49,8 +51,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ButterKnife.bind(this);
     setSupportActionBar(toolbar);
 
-    viewPager.setAdapter(new AdapterViewPagerRepo(getSupportFragmentManager(), MainActivity.this));
+    AdapterViewPagerRepo adapterViewPagerRepo = new AdapterViewPagerRepo(getSupportFragmentManager(), MainActivity.this);
+    viewPager.setAdapter(adapterViewPagerRepo);
     tabLayout.setupWithViewPager(viewPager);
+    for (int i = 0; i < MainActivity.this.tabLayout.getTabCount(); i++) {
+      TabLayout.Tab tab = MainActivity.this.tabLayout.getTabAt(i);
+      if (tab != null) {
+        tab.setText("");
+        if (i == 0) {
+          tab.setCustomView(adapterViewPagerRepo.getTabView(MainActivity.this, i, true));
+        } else {
+          tab.setCustomView(adapterViewPagerRepo.getTabView(MainActivity.this, i, false));
+        }
+      }
+    }
+    viewPager.addOnPageChangeListener(this);
 
     fab.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
@@ -141,5 +156,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
     drawer.closeDrawer(GravityCompat.START);
     return true;
+  }
+
+  @Override public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+  }
+
+  @Override public void onPageSelected(int position) {
+    setActiveTab(position);
+  }
+
+  @Override public void onPageScrollStateChanged(int state) {
+  }
+
+  private void setActiveTab(int position) {
+    for (int i = 0; i < MainActivity.this.tabLayout.getTabCount(); i++) {
+      TabLayout.Tab tab = MainActivity.this.tabLayout.getTabAt(i);
+      boolean isSelected = false;
+      if (position == i) {
+        isSelected = true;
+      }
+      if (tab != null && tab.getCustomView() != null) {
+        TextView tabText = (TextView) tab.getCustomView().findViewById(R.id.tab_text);
+        CircularTextView tabBadge = (CircularTextView) tab.getCustomView().findViewById(R.id.tab_badge);
+        AdapterViewPagerRepo.setTabSelected(isSelected, tabText, tabBadge);
+      }
+    }
   }
 }

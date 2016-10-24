@@ -3,6 +3,8 @@ package pl.tajchert.githubpreview;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -42,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   @BindView(R.id.fab) FloatingActionButton fab;
   @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
   @BindView(R.id.nav_view) NavigationView navigationView;
+  @BindView(R.id.collapsing_toolbar) CollapsingToolbarLayout collapsingToolbarLayout;
+  @BindView(R.id.appBar) AppBarLayout appBarLayout;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -49,22 +53,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     AppGithubPreview.getAppInstance(this).getAppComponent().inject(this);
     ButterKnife.bind(this);
     setSupportActionBar(toolbar);
-
-    AdapterViewPagerRepo adapterViewPagerRepo = new AdapterViewPagerRepo(getSupportFragmentManager(), MainActivity.this);
-    viewPager.setAdapter(adapterViewPagerRepo);
-    tabLayout.setupWithViewPager(viewPager);
-    for (int i = 0; i < MainActivity.this.tabLayout.getTabCount(); i++) {
-      TabLayout.Tab tab = MainActivity.this.tabLayout.getTabAt(i);
-      if (tab != null) {
-        tab.setText("");
-        if (i == 0) {
-          tab.setCustomView(adapterViewPagerRepo.getTabView(MainActivity.this, i, true));
-        } else {
-          tab.setCustomView(adapterViewPagerRepo.getTabView(MainActivity.this, i, false));
-        }
-      }
-    }
-    viewPager.addOnPageChangeListener(this);
+    setViewPagerWithTabs();
+    setToolbar();
 
     fab.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
@@ -86,6 +76,45 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     toggle.syncState();
 
     navigationView.setNavigationItemSelectedListener(this);
+  }
+
+  private void setToolbar() {
+    collapsingToolbarLayout.setTitle(" ");
+    appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+      boolean isShow = false;
+      int scrollRange = -1;
+
+      @Override public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+        if (scrollRange == -1) {
+          scrollRange = appBarLayout.getTotalScrollRange();
+        }
+        if (scrollRange + verticalOffset == 0) {
+          collapsingToolbarLayout.setTitle("Title");
+          isShow = true;
+        } else if (isShow) {
+          collapsingToolbarLayout.setTitle(" ");//carefull there should a space between double quote otherwise it wont work
+          isShow = false;
+        }
+      }
+    });
+  }
+
+  private void setViewPagerWithTabs() {
+    AdapterViewPagerRepo adapterViewPagerRepo = new AdapterViewPagerRepo(getSupportFragmentManager(), MainActivity.this);
+    viewPager.setAdapter(adapterViewPagerRepo);
+    tabLayout.setupWithViewPager(viewPager);
+    for (int i = 0; i < MainActivity.this.tabLayout.getTabCount(); i++) {
+      TabLayout.Tab tab = MainActivity.this.tabLayout.getTabAt(i);
+      if (tab != null) {
+        tab.setText("");
+        if (i == 0) {
+          tab.setCustomView(adapterViewPagerRepo.getTabView(MainActivity.this, i, true));
+        } else {
+          tab.setCustomView(adapterViewPagerRepo.getTabView(MainActivity.this, i, false));
+        }
+      }
+    }
+    viewPager.addOnPageChangeListener(this);
   }
 
   private void getRepoDetails() {

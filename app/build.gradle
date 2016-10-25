@@ -4,7 +4,7 @@ apply plugin: 'me.tatarka.retrolambda'
 
 android {
   compileSdkVersion 25
-  buildToolsVersion "24.0.2"
+  buildToolsVersion "24.0.3"
   defaultConfig {
     applicationId "pl.tajchert.githubpreview"
     minSdkVersion 16
@@ -45,6 +45,7 @@ dependencies {
   compile 'com.android.support:support-v4:25.0.0'
   compile 'com.jakewharton:butterknife:8.4.0'
   compile 'com.squareup.picasso:picasso:2.5.2'
+  compile project(':markdownview')
   compile "com.mikepenz:iconics-core:2.8.1@aar"
   compile 'com.mikepenz:octicons-typeface:3.2.0.2@aar'
   compile 'com.mikepenz:google-material-typeface:2.2.0.3.original@aar'

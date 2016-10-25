@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -15,21 +17,28 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.context.IconicsLayoutInflater;
+import com.mukesh.MarkdownView;
 import com.squareup.picasso.Picasso;
+import java.io.IOException;
 import javax.inject.Inject;
+import okhttp3.ResponseBody;
 import pl.tajchert.githubpreview.api.ApiGithub;
+import pl.tajchert.githubpreview.api.ApiGithubRaw;
 import pl.tajchert.githubpreview.api.GithubLicense;
 import pl.tajchert.githubpreview.api.GithubRepository;
 import pl.tajchert.githubpreview.api.Owner;
@@ -40,11 +49,13 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, ViewPager.OnPageChangeListener {
+public class MainActivity extends AppCompatActivity
+    implements NavigationView.OnNavigationItemSelectedListener, ViewPager.OnPageChangeListener, SwipeRefreshLayout.OnRefreshListener {
   public static final String TAG = MainActivity.class.getCanonicalName();
   @Inject SharedPreferences sharedPreferences;
   @Inject Picasso picasso;
   @Inject ApiGithub apiService;
+  @Inject ApiGithubRaw apiRawService;
 
   @BindView(R.id.tabLayout) TabLayout tabLayout;
   @BindView(R.id.viewPager) ViewPager viewPager;
@@ -55,6 +66,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   @BindView(R.id.collapsing_toolbar) CollapsingToolbarLayout collapsingToolbarLayout;
   @BindView(R.id.appBar) AppBarLayout appBarLayout;
   @BindView(R.id.toolbarContentLayout) LinearLayout toolbarContentLayout;
+  @BindView(R.id.swipeRefreshRepo) SwipeRefreshLayout swipeRefreshRepo;
+  @BindView(R.id.bottom_sheet) RelativeLayout bottomSheetLayout;
+  @BindView(R.id.fileName) TextView textFileName;
+  @BindView(R.id.fileContent) MarkdownView textFileContent;
+  private BottomSheetBehavior mBottomSheetBehavior;
   private ActivityMainBinding binding;
   private GithubRepository repo;
 
@@ -68,6 +84,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     setViewPagerWithTabs();
     setToolbar();
     getRepoDetails("BusWear", "tajchert");
+    mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
+    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+    bottomSheetLayout.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View view) {
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+      }
+    });
+    mBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+      @Override public void onStateChanged(@NonNull View bottomSheet, int newState) {
+        if (newState != BottomSheetBehavior.STATE_COLLAPSED
+            && newState != BottomSheetBehavior.STATE_HIDDEN
+            && newState != BottomSheetBehavior.STATE_SETTLING) {
+          if (appBarLayout != null) {
+            appBarLayout.setExpanded(false);
+          }
+        }
+      }
+
+      @Override public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+      }
+    });
+    swipeRefreshRepo.setEnabled(false);
+    swipeRefreshRepo.setOnRefreshListener(this);
+    swipeRefreshRepo.setColorSchemeResources(R.color.colorAccent, R.color.colorAccent, R.color.colorAccent);
+    swipeRefreshRepo.setProgressViewOffset(false, 0, CommonTools.dpToPx(156));
     fab.setImageDrawable(new IconicsDrawable(this, "gmd-star_border").colorRes(R.color.white));
     fab.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
@@ -133,14 +174,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     viewPager.addOnPageChangeListener(this);
   }
 
-  private void getRepoDetails(String name, String authorLogin) {
+  private void getRepoDetails(String repoName, String authorLogin) {
     if (binding != null) {
-      binding.setRepo(new GithubRepository(name, new Owner(authorLogin)));
+      binding.setRepo(new GithubRepository(repoName, new Owner(authorLogin)));
     }
-    apiService.getRepositoryDetails(authorLogin, name).doOnSubscribe(() -> {
+    apiService.getRepositoryDetails(authorLogin, repoName).doOnSubscribe(() -> {
       Timber.i("getRepositoryDetails - OnSubscribe");
-      if (binding != null) {
-        binding.progressIndicator.setVisibility(View.VISIBLE);
+      if (swipeRefreshRepo != null) {
+        swipeRefreshRepo.setRefreshing(true);
       }
     }).doOnCompleted(() -> {
       Timber.i("getRepositoryDetails - OnCompleted");
@@ -162,13 +203,59 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         binding.setRepo(repository);
         binding.progressIndicator.setVisibility(View.GONE);
       }
+      if (swipeRefreshRepo != null) {
+        swipeRefreshRepo.setRefreshing(false);
+      }
+      if (repository != null) {
+        getReadMeContent(repoName, authorLogin);
+      }
     }, e -> {
       Timber.i("getRepositoryDetails - onError: " + e.getLocalizedMessage());
       if (binding != null) {
         binding.progressIndicator.setVisibility(View.GONE);
       }
+      if (swipeRefreshRepo != null) {
+        swipeRefreshRepo.setRefreshing(false);
+      }
+      if (fab != null) {
+        Snackbar.make(fab, "Something failed, try again.", Snackbar.LENGTH_LONG).setAction("Retry", new View.OnClickListener() {
+          @Override public void onClick(View view) {
+            getRepoDetails("BusWear", "tajchert");
+          }
+        }).show();
+      }
     });
-    /**/
+  }
+
+  private void getReadMeContent(String repoName, String authorLogin) {
+    apiService.getReadmeDetails(authorLogin, repoName).doOnSubscribe(() -> {
+    }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).flatMap(repositoryReadme -> {//TODO handle other branches than master
+      Observable<ResponseBody> repoLicense = apiRawService.getFile(authorLogin, repoName, "master", repositoryReadme.name)
+          .subscribeOn(Schedulers.io())
+          .observeOn(AndroidSchedulers.mainThread());
+      return Observable.zip(repoLicense, Observable.just(repositoryReadme), Pair::new);
+    }).subscribe(pair -> {
+      Log.d(TAG, "getReadMeContent: ");
+      if (pair.first != null) {
+        if (textFileContent != null) {
+          try {
+            textFileContent.setMarkDownText(pair.first.string());
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        }
+      }
+      if (pair.second != null) {
+        if (textFileName != null) {
+          textFileName.setText(pair.second.name);
+        }
+      }
+      if (mBottomSheetBehavior != null) {
+        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+      }
+    }, e -> {
+      Log.e(TAG, "getReadMeContent: error: " + e.getLocalizedMessage());
+    });
   }
 
   @Override public void onBackPressed() {
@@ -246,5 +333,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         AdapterViewPagerRepo.setTabSelected(isSelected, tabText, tabBadge);
       }
     }
+  }
+
+  @Override public void onRefresh() {
+    getRepoDetails("BusWear", "tajchert");
   }
 }

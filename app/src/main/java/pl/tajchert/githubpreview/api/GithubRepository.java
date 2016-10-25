@@ -80,6 +80,11 @@ public class GithubRepository extends GithubResponse {
   public transient Long commitsCount;
   public transient Long contributorsCount;
 
+  public GithubRepository(String name, Owner owner) {
+    this.name = name;
+    this.owner = owner;
+  }
+
   public String getName() {
     if (name == null) {
       if (fullName != null && fullName.contains("/")) {

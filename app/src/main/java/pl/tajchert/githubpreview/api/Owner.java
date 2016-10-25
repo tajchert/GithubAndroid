@@ -26,4 +26,8 @@ public class Owner {
   @SerializedName("received_events_url") @Expose public String receivedEventsUrl;
   @SerializedName("type") @Expose public String type;
   @SerializedName("site_admin") @Expose public Boolean siteAdmin;
+
+  public Owner(String login) {
+    this.login = login;
+  }
 }

@@ -8,6 +8,7 @@
         name="repo"
         type="pl.tajchert.githubpreview.api.GithubRepository"
         />
+    <import type="android.view.View"/>
   </data>
   <android.support.design.widget.CoordinatorLayout
       android:layout_width="match_parent"
@@ -50,9 +51,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="6dp"
-            android:layout_marginLeft="24dp"
-            android:layout_marginRight="24dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:animateLayoutChanges="true"
             android:gravity="bottom"
             android:orientation="vertical"
             >
@@ -66,6 +68,7 @@
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:padding="3dp"
+                android:visibility="@{repo.stargazersCount != null &amp;&amp; Long.valueOf(repo.stargazersCount)  > 0 ? View.VISIBLE : View.GONE}"
                 app:iiv_color="@color/white"
                 app:iiv_icon="oct-star"
                 />
@@ -73,18 +76,20 @@
                 android:id="@+id/textRepoStars"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="6dp"
                 android:fontFamily="sans-serif"
                 android:text="@{repo.stargazersCount}"
                 android:textColor="@color/white"
                 android:textSize="14sp"
+                android:visibility="@{repo.stargazersCount != null &amp;&amp; Long.valueOf(repo.stargazersCount)  > 0 ? View.VISIBLE : View.GONE}"
                 tools:text="300"
                 />
 
             <com.mikepenz.iconics.view.IconicsImageView
                 android:layout_width="18dp"
                 android:layout_height="18dp"
-                android:layout_marginLeft="6dp"
                 android:padding="3dp"
+                android:visibility="@{repo.subscribersCount != null &amp;&amp; Long.valueOf(repo.subscribersCount)  > 0 ? View.VISIBLE : View.GONE}"
                 app:iiv_color="@color/white"
                 app:iiv_icon="oct-eye"
                 />
@@ -92,10 +97,12 @@
                 android:id="@+id/textRepoWatchers"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="6dp"
                 android:fontFamily="sans-serif"
                 android:text="@{repo.subscribersCount}"
                 android:textColor="@color/white"
                 android:textSize="14sp"
+                android:visibility="@{repo.subscribersCount != null &amp;&amp; Long.valueOf(repo.subscribersCount)  > 0 ? View.VISIBLE : View.GONE}"
                 tools:text="300"
                 />
 
@@ -103,8 +110,8 @@
             <com.mikepenz.iconics.view.IconicsImageView
                 android:layout_width="18dp"
                 android:layout_height="18dp"
-                android:layout_marginLeft="6dp"
                 android:padding="3dp"
+                android:visibility="@{repo.forksCount != null &amp;&amp; Long.valueOf(repo.forksCount)  > 0 ? View.VISIBLE : View.GONE}"
                 app:iiv_color="@color/white"
                 app:iiv_icon="oct-repo-forked"
                 />
@@ -116,6 +123,7 @@
                 android:text="@{repo.forksCount}"
                 android:textColor="@color/white"
                 android:textSize="14sp"
+                android:visibility="@{repo.forksCount != null &amp;&amp; Long.valueOf(repo.forksCount)  > 0 ? View.VISIBLE : View.GONE}"
                 tools:text="300"
                 />
           </LinearLayout>
@@ -131,6 +139,7 @@
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:padding="3dp"
+                android:visibility="@{repo.commitsCount != null &amp;&amp; Long.valueOf(repo.commitsCount)  > 0 ? View.VISIBLE : View.GONE}"
                 app:iiv_color="@color/white"
                 app:iiv_icon="oct-history"
                 />
@@ -138,18 +147,20 @@
                 android:id="@+id/textRepoCommits"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="6dp"
                 android:fontFamily="sans-serif"
                 android:text="@{repo.commitsCount}"
                 android:textColor="@color/white"
                 android:textSize="14sp"
+                android:visibility="@{repo.commitsCount != null &amp;&amp; Long.valueOf(repo.commitsCount)  > 0 ? View.VISIBLE : View.GONE}"
                 tools:text="300"
                 />
 
             <com.mikepenz.iconics.view.IconicsImageView
                 android:layout_width="18dp"
                 android:layout_height="18dp"
-                android:layout_marginLeft="6dp"
                 android:padding="3dp"
+                android:visibility="@{repo.contributorsCount != null &amp;&amp; Long.valueOf(repo.contributorsCount)  > 0 ? View.VISIBLE : View.GONE}"
                 app:iiv_color="@color/white"
                 app:iiv_icon="oct-organization"
                 />
@@ -157,18 +168,20 @@
                 android:id="@+id/textRepoContributors"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="6dp"
                 android:fontFamily="sans-serif"
                 android:text="@{repo.contributorsCount}"
                 android:textColor="@color/white"
                 android:textSize="14sp"
+                android:visibility="@{repo.contributorsCount != null &amp;&amp; Long.valueOf(repo.contributorsCount)  > 0 ? View.VISIBLE : View.GONE}"
                 tools:text="300"
                 />
 
             <com.mikepenz.iconics.view.IconicsImageView
                 android:layout_width="18dp"
                 android:layout_height="18dp"
-                android:layout_marginLeft="6dp"
                 android:padding="3dp"
+                android:visibility='@{repo.license.license.name != null &amp;&amp; !repo.license.license.name.equals("") ? View.VISIBLE : View.GONE}'
                 app:iiv_color="@color/white"
                 app:iiv_icon="oct-law"
                 />
@@ -180,6 +193,7 @@
                 android:text="@{repo.license.license.name}"
                 android:textColor="@color/white"
                 android:textSize="14sp"
+                android:visibility='@{repo.license.license.name != null &amp;&amp; !repo.license.license.name.equals("") ? View.VISIBLE : View.GONE}'
                 tools:text="Apache"
                 />
           </LinearLayout>
@@ -200,6 +214,7 @@
                 android:text="@{repo.name}"
                 android:textColor="@color/white"
                 android:textSize="24sp"
+                android:visibility='@{repo.name != null &amp;&amp; !repo.name.equals("") ? View.VISIBLE : View.GONE}'
                 tools:text="TopSecretProject"
                 />
           </LinearLayout>
@@ -216,9 +231,10 @@
                 android:ellipsize="end"
                 android:fontFamily="sans-serif"
                 android:maxLines="1"
-                android:text="@{repo.owner.login}"
+                android:text='@{"@" + repo.owner.login}'
                 android:textColor="@color/gray"
                 android:textSize="14sp"
+                android:visibility='@{repo.owner.login != null &amp;&amp; !repo.owner.login.equals("") ? View.VISIBLE : View.GONE}'
                 tools:text="Kowalski"
                 />
           </LinearLayout>

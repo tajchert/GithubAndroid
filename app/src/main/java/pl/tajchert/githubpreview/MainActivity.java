@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import pl.tajchert.githubpreview.api.ApiGithub;
 import pl.tajchert.githubpreview.api.GithubLicense;
 import pl.tajchert.githubpreview.api.GithubRepository;
+import pl.tajchert.githubpreview.api.Owner;
 import pl.tajchert.githubpreview.databinding.ActivityMainBinding;
 import pl.tajchert.githubpreview.view.AdapterViewPagerRepo;
 import rx.Observable;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
   @BindView(R.id.appBar) AppBarLayout appBarLayout;
   @BindView(R.id.toolbarContentLayout) LinearLayout toolbarContentLayout;
   private ActivityMainBinding binding;
+  private GithubRepository repo;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     LayoutInflaterCompat.setFactory(getLayoutInflater(), new IconicsLayoutInflater(getDelegate()));
@@ -65,18 +67,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     setSupportActionBar(toolbar);
     setViewPagerWithTabs();
     setToolbar();
+    getRepoDetails("BusWear", "tajchert");
     fab.setImageDrawable(new IconicsDrawable(this, "gmd-star_border").colorRes(R.color.white));
     fab.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View view) {
         Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-        getRepoDetails();
       }
     });
     if (getIntent() != null && Intent.ACTION_VIEW.equals(getIntent().getAction())) {
       if (getIntent().getData() != null) {
         String Url = "www.github.com" + getIntent().getData().getPath();
         //TODO detect type of path (username, repo...)
-        getRepoDetails();
+        getRepoDetails("BusWear", "tajchert");
       }
     }
 
@@ -99,7 +101,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
           scrollRange = appBarLayout.getTotalScrollRange();
         }
         if (scrollRange + verticalOffset == 0) {
-          collapsingToolbarLayout.setTitle("Title");
+          if (repo != null && repo.getName() != null) {
+            collapsingToolbarLayout.setTitle(repo.getName());
+          }
           toolbarContentLayout.setVisibility(View.GONE);
           isShow = true;
         } else if (isShow) {
@@ -129,9 +133,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     viewPager.addOnPageChangeListener(this);
   }
 
-  private void getRepoDetails() {
-    apiService.getRepositoryDetails("tajchert", "BusWear").doOnSubscribe(() -> {
+  private void getRepoDetails(String name, String authorLogin) {
+    if (binding != null) {
+      binding.setRepo(new GithubRepository(name, new Owner(authorLogin)));
+    }
+    apiService.getRepositoryDetails(authorLogin, name).doOnSubscribe(() -> {
       Timber.i("getRepositoryDetails - OnSubscribe");
+      if (binding != null) {
+        binding.progressIndicator.setVisibility(View.VISIBLE);
+      }
     }).doOnCompleted(() -> {
       Timber.i("getRepositoryDetails - OnCompleted");
     }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).flatMap(githubRepository -> {
@@ -147,11 +157,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
       return Observable.just(repository);
     }).subscribe(repository -> {
       Timber.i("getRepositoryDetails - onNext");
+      MainActivity.this.repo = repository;
       if (binding != null) {
         binding.setRepo(repository);
+        binding.progressIndicator.setVisibility(View.GONE);
       }
     }, e -> {
-      Timber.i("getRepositoryDetails - onError");
+      Timber.i("getRepositoryDetails - onError: " + e.getLocalizedMessage());
+      if (binding != null) {
+        binding.progressIndicator.setVisibility(View.GONE);
+      }
     });
     /**/
   }

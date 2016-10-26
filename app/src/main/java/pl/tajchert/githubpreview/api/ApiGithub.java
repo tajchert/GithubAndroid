@@ -1,5 +1,6 @@
 package pl.tajchert.githubpreview.api;
 
+import java.util.List;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -21,6 +22,6 @@ public interface ApiGithub {
   @GET("repos/{ownerName}/{repositoryName}/license") Observable<GithubLicense> getRepoLicense(@Path("ownerName") String ownerName,
       @Path("repositoryName") String repositoryName);
 
-  @GET("repos/{ownerName}/{repositoryName}/contents/{fileName}") Observable<GithubLicense> getFile(@Path("ownerName") String ownerName,
-      @Path("repositoryName") String repositoryName, @Path("fileName") String fileName, @Query("ref") String ref);
+  @GET("repositories/{repositoryId}/contents/{path}") Observable<List<File>> getFile(@Path("repositoryId") Long repositoryId,
+      @Path("path") String fileName, @Query("ref") String ref);
 }

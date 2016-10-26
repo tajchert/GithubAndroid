@@ -2,13 +2,12 @@ package pl.tajchert.githubpreview.api;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import org.parceler.Parcel;
 
 /**
  * Created by mtajc on 16.10.2016.
  */
-
-public class GithubRepository extends GithubResponse {
-
+@Parcel public class GithubRepository extends GithubResponse {
   @SerializedName("id") @Expose public Long id;
   @SerializedName("full_name") @Expose public String fullName;
   @SerializedName("owner") @Expose public Owner owner;
@@ -66,7 +65,7 @@ public class GithubRepository extends GithubResponse {
   @SerializedName("has_wiki") @Expose public Boolean hasWiki;
   @SerializedName("has_pages") @Expose public Boolean hasPages;
   @SerializedName("forks_count") @Expose public Long forksCount;
-  @SerializedName("mirror_url") @Expose public Object mirrorUrl;
+  @SerializedName("mirror_url") @Expose public String mirrorUrl;
   @SerializedName("open_issues_count") @Expose public Long openIssuesCount;
   @SerializedName("forks") @Expose public Long forks;
   @SerializedName("open_issues") @Expose public Long openIssues;
@@ -79,6 +78,9 @@ public class GithubRepository extends GithubResponse {
   public transient GithubLicense license;
   public transient Long commitsCount;
   public transient Long contributorsCount;
+
+  public GithubRepository() {
+  }
 
   public GithubRepository(String name, Owner owner) {
     this.name = name;

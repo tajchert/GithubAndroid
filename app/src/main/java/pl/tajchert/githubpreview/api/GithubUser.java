@@ -2,12 +2,15 @@ package pl.tajchert.githubpreview.api;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import org.parceler.Parcel;
 
 /**
  * Created by mtajc on 16.10.2016.
  */
+@Parcel public class GithubUser extends GithubResponse {
+  public GithubUser() {
+  }
 
-public class GithubUser extends GithubResponse {
   @SerializedName("login") @Expose public String login;
   @SerializedName("id") @Expose public Long id;
   @SerializedName("avatar_url") @Expose public String avatarUrl;

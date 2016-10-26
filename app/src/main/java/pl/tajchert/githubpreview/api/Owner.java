@@ -2,13 +2,13 @@ package pl.tajchert.githubpreview.api;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import org.parceler.Parcel;
 
 /**
  * Created by mtajc on 16.10.2016.
  */
 
-public class Owner {
-
+@Parcel public class Owner {
   @SerializedName("login") @Expose public String login;
   @SerializedName("id") @Expose public Long id;
   @SerializedName("avatar_url") @Expose public String avatarUrl;
@@ -26,6 +26,9 @@ public class Owner {
   @SerializedName("received_events_url") @Expose public String receivedEventsUrl;
   @SerializedName("type") @Expose public String type;
   @SerializedName("site_admin") @Expose public Boolean siteAdmin;
+
+  public Owner() {
+  }
 
   public Owner(String login) {
     this.login = login;

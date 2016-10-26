@@ -30,7 +30,10 @@
         <data android:host="www.github.com"/>
         <data android:host="github.com"/>
       </intent-filter>
-
+    </activity>
+    <activity
+        android:name=".UserDetailsActivity"
+        android:label="@string/app_name">
     </activity>
   </application>
 

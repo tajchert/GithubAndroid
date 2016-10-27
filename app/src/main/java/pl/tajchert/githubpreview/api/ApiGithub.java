@@ -1,5 +1,6 @@
 package pl.tajchert.githubpreview.api;
 
+import java.util.HashMap;
 import java.util.List;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -13,6 +14,8 @@ import rx.Observable;
 public interface ApiGithub {
   @GET("users/{userName}/") Observable<GithubUser> getUserDetails(@Path("userName") String userName);
 
+  @GET("rate_limit") Observable<RateLimitResponse> getApiRateLimit();
+
   @GET("repos/{ownerName}/{repositoryName}") Observable<GithubRepository> getRepositoryDetails(@Path("ownerName") String ownerName,
       @Path("repositoryName") String repositoryName);
 
@@ -20,6 +23,9 @@ public interface ApiGithub {
       @Path("repositoryName") String repositoryName);
 
   @GET("repos/{ownerName}/{repositoryName}/license") Observable<GithubLicense> getRepoLicense(@Path("ownerName") String ownerName,
+      @Path("repositoryName") String repositoryName);
+
+  @GET("repos/{ownerName}/{repositoryName}/languages") Observable<HashMap<String, Long>> getRepoLanguages(@Path("ownerName") String ownerName,
       @Path("repositoryName") String repositoryName);
 
   @GET("repositories/{repositoryId}/contents/{path}") Observable<List<File>> getFile(@Path("repositoryId") Long repositoryId,

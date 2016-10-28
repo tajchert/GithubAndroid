@@ -6,7 +6,12 @@ package pl.tajchert.githubpreview.view;
 
 public class TabItemRepo {
   public String title;
-  public int counter;
+  public Integer counter;
+
+  public TabItemRepo(String title) {
+    this.title = title;
+    this.counter = null;
+  }
 
   public TabItemRepo(String title, int counter) {
     this.title = title;

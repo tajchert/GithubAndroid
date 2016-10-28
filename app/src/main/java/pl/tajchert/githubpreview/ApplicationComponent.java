@@ -2,6 +2,7 @@ package pl.tajchert.githubpreview;
 
 import dagger.Component;
 import javax.inject.Singleton;
+import pl.tajchert.githubpreview.view.FragmentFolderStructure;
 
 /**
  * Created by mtajc on 16.10.2016.
@@ -14,6 +15,8 @@ import javax.inject.Singleton;
   void inject(MainActivity activity);
 
   void inject(UserDetailsActivity activity);
+
+  void inject(FragmentFolderStructure fragmentFolderStructure);
 
   @SuppressWarnings("unused") final class Initializer {
     static ApplicationComponent init(AppGithubPreview app) {

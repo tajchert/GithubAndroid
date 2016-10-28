@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.TextView;
 import java.util.ArrayList;
 import pl.tajchert.githubpreview.R;
+import pl.tajchert.githubpreview.api.GithubRepository;
 
 /**
  * Created by mtajc on 17.10.2016.
@@ -18,19 +19,21 @@ import pl.tajchert.githubpreview.R;
 
 public class AdapterViewPagerRepo extends FragmentPagerAdapter {
   private ArrayList<TabItemRepo> tabItemRepos = new ArrayList<>();
-  private Context context;
+  private GithubRepository githubRepository;
 
-  public AdapterViewPagerRepo(FragmentManager fm, Context context) {
+  public AdapterViewPagerRepo(FragmentManager fm, Context context, GithubRepository githubRepository) {
     super(fm);
-    this.context = context;
-    tabItemRepos.add(new TabItemRepo("Code", 0));
-    tabItemRepos.add(new TabItemRepo("Issues", 0));
-    tabItemRepos.add(new TabItemRepo("Pull requests", 0));
-    tabItemRepos.add(new TabItemRepo("Projects", 0));
-    tabItemRepos.add(new TabItemRepo("Wiki", 0));
-    tabItemRepos.add(new TabItemRepo("Pulse", 0));
-    tabItemRepos.add(new TabItemRepo("Graphs", 0));
-    tabItemRepos.add(new TabItemRepo("Settings", 0));//TODO change title to enum
+    this.githubRepository = githubRepository;
+    if (githubRepository != null) {
+      tabItemRepos.add(new TabItemRepo("Code"));
+      tabItemRepos.add(new TabItemRepo("Issues", 0));
+      tabItemRepos.add(new TabItemRepo("Pull requests", 0));
+      tabItemRepos.add(new TabItemRepo("Projects", 0));
+      tabItemRepos.add(new TabItemRepo("Wiki"));
+      tabItemRepos.add(new TabItemRepo("Pulse"));
+      tabItemRepos.add(new TabItemRepo("Graphs"));
+      tabItemRepos.add(new TabItemRepo("Settings"));//TODO change title to enum
+    }
   }
 
   @Override public int getCount() {
@@ -38,7 +41,7 @@ public class AdapterViewPagerRepo extends FragmentPagerAdapter {
   }
 
   @Override public Fragment getItem(int position) {
-    return FragmentFolderStructure.newInstance(position + 1);
+    return FragmentFolderStructure.newInstance(githubRepository);
   }
 
   @Override public CharSequence getPageTitle(int position) {
@@ -53,7 +56,12 @@ public class AdapterViewPagerRepo extends FragmentPagerAdapter {
       TextView tabBadge = (TextView) tab.findViewById(R.id.tab_badge);
       setTabSelected(isSelected, tabText, tabBadge);
       tabText.setText(tabItemRepos.get(position).title);
-      tabBadge.setText(Integer.toString(tabItemRepos.get(position).counter));
+      if (tabItemRepos.get(position).counter != null) {
+        tabBadge.setVisibility(View.VISIBLE);
+        tabBadge.setText(Integer.toString(tabItemRepos.get(position).counter));
+      } else {
+        tabBadge.setVisibility(View.GONE);
+      }
     }
 
     return tab;

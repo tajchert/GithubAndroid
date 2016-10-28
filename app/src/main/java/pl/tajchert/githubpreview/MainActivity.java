@@ -36,14 +36,10 @@ import com.mikepenz.iconics.context.IconicsLayoutInflater;
 import com.mukesh.MarkdownView;
 import com.squareup.picasso.Picasso;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 import javax.inject.Inject;
 import okhttp3.ResponseBody;
 import pl.tajchert.githubpreview.api.ApiGithub;
 import pl.tajchert.githubpreview.api.ApiGithubRaw;
-import pl.tajchert.githubpreview.api.File;
 import pl.tajchert.githubpreview.api.GithubLicense;
 import pl.tajchert.githubpreview.api.GithubRepository;
 import pl.tajchert.githubpreview.api.Owner;
@@ -51,7 +47,6 @@ import pl.tajchert.githubpreview.databinding.ActivityMainBinding;
 import pl.tajchert.githubpreview.view.AdapterViewPagerRepo;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
@@ -87,7 +82,7 @@ public class MainActivity extends AppCompatActivity
     AppGithubPreview.getAppInstance(this).getAppComponent().inject(this);
     ButterKnife.bind(this);
     setSupportActionBar(toolbar);
-    setViewPagerWithTabs();
+    setViewPagerWithTabs(null);
     setToolbar();
     getRepoDetails("BusWear", "tajchert");
     mBottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
@@ -155,15 +150,18 @@ public class MainActivity extends AppCompatActivity
           isShow = true;
         } else if (isShow) {
           toolbarContentLayout.setVisibility(View.VISIBLE);
-          collapsingToolbarLayout.setTitle(" ");//carefull there should a space between double quote otherwise it wont work
+          collapsingToolbarLayout.setTitle(" ");//careful there should a space between double quote otherwise it wont work
           isShow = false;
         }
       }
     });
   }
 
-  private void setViewPagerWithTabs() {
-    AdapterViewPagerRepo adapterViewPagerRepo = new AdapterViewPagerRepo(getSupportFragmentManager(), MainActivity.this);
+  private void setViewPagerWithTabs(GithubRepository githubRepository) {
+    if(viewPager == null || tabLayout == null) {
+      return;
+    }
+    AdapterViewPagerRepo adapterViewPagerRepo = new AdapterViewPagerRepo(getSupportFragmentManager(), MainActivity.this, githubRepository);
     viewPager.setAdapter(adapterViewPagerRepo);
     tabLayout.setupWithViewPager(viewPager);
     for (int i = 0; i < MainActivity.this.tabLayout.getTabCount(); i++) {
@@ -205,6 +203,7 @@ public class MainActivity extends AppCompatActivity
     }).subscribe(repository -> {
       Timber.i("getRepositoryDetails - onNext");
       MainActivity.this.repo = repository;
+      setViewPagerWithTabs(repository);
       if (binding != null) {
         binding.setRepo(repository);
         binding.progressIndicator.setVisibility(View.GONE);
@@ -214,9 +213,6 @@ public class MainActivity extends AppCompatActivity
       }
       if (repository != null) {
         getReadMeContent(repoName, authorLogin);
-        if (repo.id != null) {
-          getFileStructure(repo.id, "");
-        }
       }
     }, e -> {
       Timber.i("getRepositoryDetails - onError: " + e.getLocalizedMessage());
@@ -264,34 +260,6 @@ public class MainActivity extends AppCompatActivity
       }
     }, e -> {
       Log.e(TAG, "getReadMeContent: error: " + e.getLocalizedMessage());
-    });
-  }
-
-  private void getFileStructure(Long repoId, String file) {
-    apiService.getFile(repoId, file, null).doOnSubscribe(() -> {
-    }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).flatMap(new Func1<List<File>, Observable<?>>() {
-      @Override public Observable<?> call(List<File> files) {
-        Collections.sort(files, new Comparator<File>() {
-          @Override public int compare(File file1, File file2) {
-            if (file1 != null && file1.type != null) {
-              int res = file1.type.compareToIgnoreCase(file2.type);
-              if (res == 0) {
-                if (file1.name != null) {
-                  return file1.name.compareToIgnoreCase(file2.name);
-                }
-              }
-              return res;
-            } else {
-              return 0;
-            }
-          }
-        });
-        return Observable.from(files);
-      }
-    }).subscribe(files -> {
-      Log.d(TAG, "getFileStructure: ");//TODO handle file
-    }, e -> {
-      Log.d(TAG, "getFileStructure: error: " + e.getLocalizedMessage());
     });
   }
 

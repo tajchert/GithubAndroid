@@ -30,4 +30,7 @@ public interface ApiGithub {
 
   @GET("repositories/{repositoryId}/contents/{path}") Observable<List<File>> getFile(@Path("repositoryId") Long repositoryId,
       @Path("path") String fileName, @Query("ref") String ref);
+
+  @GET("repos/{ownerName}/{repositoryName}/issues") Observable<List<GithubIssue>> getIssues(@Path("ownerName") String ownerName,
+      @Path("repositoryName") String repositoryName);
 }

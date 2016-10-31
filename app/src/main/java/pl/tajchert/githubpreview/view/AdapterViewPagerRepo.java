@@ -19,6 +19,7 @@ import pl.tajchert.githubpreview.api.GithubRepository;
 
 public class AdapterViewPagerRepo extends FragmentPagerAdapter {
   private ArrayList<TabItemRepo> tabItemRepos = new ArrayList<>();
+  private ArrayList<Fragment> fragments = new ArrayList<>();
   private GithubRepository githubRepository;
 
   public AdapterViewPagerRepo(FragmentManager fm, Context context, GithubRepository githubRepository) {
@@ -41,7 +42,16 @@ public class AdapterViewPagerRepo extends FragmentPagerAdapter {
   }
 
   @Override public Fragment getItem(int position) {
-    return FragmentFolderStructure.newInstance(githubRepository);
+
+    switch (position) {
+      case 0:
+        return FragmentFolderStructure.newInstance(githubRepository);
+      case 1:
+        return FragmentIssues.newInstance(githubRepository);
+      default:
+        return FragmentIssues.newInstance(githubRepository);
+      //TODO thing about caching Fragments
+    }
   }
 
   @Override public CharSequence getPageTitle(int position) {
